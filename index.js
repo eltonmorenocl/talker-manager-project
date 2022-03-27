@@ -3,6 +3,13 @@ const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 const generateToken = require('./generatetoken');
 const { authEmail, authPassword } = require('./authLogin');
+const { 
+  foundToken, 
+  nameValidate, 
+  ageValidate, 
+  talkValidate, 
+  talkValidateDate, 
+  talkValidateRate } = require('./authNewTalker');
 
 const app = express();
 app.use(bodyParser.json());
@@ -38,6 +45,24 @@ app.post('/login', authEmail, authPassword, (req, res) => {
   const token = generateToken();
   console.log(token);
   return res.status(200).json({ token });
+});
+
+app.post('/talker', 
+  foundToken, 
+  nameValidate, 
+  ageValidate, 
+  talkValidate, 
+  talkValidateDate, 
+  talkValidateRate, 
+  async (req, res) => {
+    const readTalker = await fs.readFile('./talker.json');
+    const talkers = JSON.parse(readTalker);
+    
+    const newTalker = req.body;
+    newTalker.id = talkers.length + 1;
+    talkers.push(newTalker);
+    await fs.writeFile('./talker.json', JSON.stringify(talkers));
+    return res.status(201).json(newTalker);
 });
 
 app.listen(PORT, () => {
