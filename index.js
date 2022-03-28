@@ -90,6 +90,21 @@ async (req, res) => {
   return res.status(200).send(talkers[foundTalker]);
 });
 
+app.delete('/talker/:id', foundToken, async (req, res) => {
+  const { id } = req.body;
+
+  const readTalker = await fs.readFile(globalTalker);
+  const talkers = JSON.parse(readTalker);
+
+  const talkIndex = talkers.findIndex((r) => r.id === +id);
+
+  talkers.splice(talkIndex, 1);
+  
+  await fs.writeFile(globalTalker, JSON.stringify(talkers));
+  
+  res.status(204).end();
+  });
+  
 app.listen(PORT, () => {
   console.log('Online');
 });
