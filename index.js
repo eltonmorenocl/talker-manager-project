@@ -22,8 +22,10 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
+const globalTalker = ('./talker.json');
+
 app.get('/talker', async (req, res) => {
-  const readTalker = await fs.readFile('./talker.json');
+  const readTalker = await fs.readFile(globalTalker);
   const talkers = JSON.parse(readTalker);
 
   if (talkers.length === 0) return res.status(200).json([]);
@@ -32,7 +34,7 @@ app.get('/talker', async (req, res) => {
 
 app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
-  const readTalker = await fs.readFile('./talker.json');
+  const readTalker = await fs.readFile(globalTalker);
   const talkers = JSON.parse(readTalker);
   const talkerId = talkers.find((talk) => talk.id === +id);
 
@@ -55,14 +57,37 @@ app.post('/talker',
   talkValidateDate, 
   talkValidateRate, 
   async (req, res) => {
-    const readTalker = await fs.readFile('./talker.json');
+    const readTalker = await fs.readFile(globalTalker);
     const talkers = JSON.parse(readTalker);
     
     const newTalker = req.body;
     newTalker.id = talkers.length + 1;
     talkers.push(newTalker);
-    await fs.writeFile('./talker.json', JSON.stringify(talkers));
+    await fs.writeFile(globalTalker, JSON.stringify(talkers));
     return res.status(201).json(newTalker);
+});
+
+app.put('/talker/:id', 
+foundToken,
+nameValidate,
+ageValidate,
+talkValidate,
+talkValidateRate,
+talkValidateDate,
+
+async (req, res) => {
+  const { id } = req.params;
+  const { name, age, talk: { watchedAt, rate } } = req.body;
+  
+  const readTalker = await fs.readFile(globalTalker);
+  const talkers = JSON.parse(readTalker);
+  
+  const foundTalker = talkers.findIndex((talker) => talker.id === +id);
+  talkers[foundTalker] = { ...talkers[foundTalker], name, age, talk: { watchedAt, rate } };
+  
+  await fs.writeFile(globalTalker, JSON.stringify(talkers));
+  
+  return res.status(200).send(talkers[foundTalker]);
 });
 
 app.listen(PORT, () => {
