@@ -43,7 +43,7 @@
 
 ## 💻 Sobre o projeto
 
-ocê vai desenvolver uma API de um CRUD (Create, Read, Update e Delete) de palestrantes. Você vai desenvolver alguns endpoints que irão ler e escrever em um arquivo, isso utilizando o módulo fs.
+Foi desenvolvido uma API de um CRUD (Create, Read, Update e Delete) de palestrantes que utiliza o módulo FS do Node.js para ler e escrever em um arquivo JSON simulando um banco de dados.
 <br />
 <br />
 <br />
