@@ -1,18 +1,9 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs').promises;
-const generateToken = require('./generatetoken');
-const { authEmail, authPassword } = require('./authLogin');
-const { 
-  foundToken, 
-  nameValidate, 
-  ageValidate, 
-  talkValidate, 
-  talkValidateDate, 
-  talkValidateRate } = require('./authNewTalker');
+const talkerRoute = require('./routes/talker');
+const loginRoute = require('./routes/login');
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
@@ -22,103 +13,9 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
-const globalTalker = ('./talker.json');
+app.use('/login', loginRoute);
+app.use('/talker', talkerRoute);
 
-app.get('/talker', async (req, res) => {
-  const readTalker = await fs.readFile(globalTalker);
-  const talkers = JSON.parse(readTalker);
-
-  if (talkers.length === 0) return res.status(200).json([]);
-  return res.status(200).json(talkers);
-});
-
-app.get('/talker/search', foundToken, async (req, res) => {
-  const { q } = req.query;
-  // console.log('q', q);
-
-  const readTalker = await fs.readFile(globalTalker);
-  const talkers = JSON.parse(readTalker);
-  
-  const filter = talkers.filter((t) => t.name.includes(q));
- 
-  if (!filter) return res.status(200).json([]);
-  
-  res.status(200).json(filter);
-  });
-
-app.get('/talker/:id', async (req, res) => {
-  const { id } = req.params;
-  const readTalker = await fs.readFile(globalTalker);
-  const talkers = JSON.parse(readTalker);
-  const talkerId = talkers.find((talk) => talk.id === +id);
-
-  if (!talkerId) return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
-
-  return res.status(200).json(talkerId);
-});
-
-app.post('/login', authEmail, authPassword, (req, res) => {
-  const token = generateToken();
-  console.log(token);
-  return res.status(200).json({ token });
-});
-
-app.post('/talker', 
-  foundToken, 
-  nameValidate, 
-  ageValidate, 
-  talkValidate, 
-  talkValidateDate, 
-  talkValidateRate, 
-  async (req, res) => {
-    const readTalker = await fs.readFile(globalTalker);
-    const talkers = JSON.parse(readTalker);
-    
-    const newTalker = req.body;
-    newTalker.id = talkers.length + 1;
-    talkers.push(newTalker);
-    await fs.writeFile(globalTalker, JSON.stringify(talkers));
-    return res.status(201).json(newTalker);
-});
-
-app.put('/talker/:id', 
-foundToken,
-nameValidate,
-ageValidate,
-talkValidate,
-talkValidateRate,
-talkValidateDate,
-
-async (req, res) => {
-  const { id } = req.params;
-  const { name, age, talk: { watchedAt, rate } } = req.body;
-  
-  const readTalker = await fs.readFile(globalTalker);
-  const talkers = JSON.parse(readTalker);
-  
-  const foundTalker = talkers.findIndex((talker) => talker.id === +id);
-  talkers[foundTalker] = { ...talkers[foundTalker], name, age, talk: { watchedAt, rate } };
-  
-  await fs.writeFile(globalTalker, JSON.stringify(talkers));
-  
-  return res.status(200).send(talkers[foundTalker]);
-});
-
-app.delete('/talker/:id', foundToken, async (req, res) => {
-  const { id } = req.body;
-
-  const readTalker = await fs.readFile(globalTalker);
-  const talkers = JSON.parse(readTalker);
-
-  const talkIndex = talkers.findIndex((r) => r.id === +id);
-
-  talkers.splice(talkIndex, 1);
-  
-  await fs.writeFile(globalTalker, JSON.stringify(talkers));
-  
-  res.status(204).end();
-  });
-  
 app.listen(PORT, () => {
   console.log('Online');
 });

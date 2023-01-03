@@ -71,11 +71,15 @@ function talkValidateRate(req, res, next) {
   next();
 }
 
-module.exports = {
-  foundToken,
+const validTalker = [
   nameValidate,
   ageValidate,
   talkValidate,
   talkValidateDate,
   talkValidateRate,
+];
+
+module.exports = {
+  foundToken,
+  validTalker,
 };
