@@ -48,7 +48,6 @@ const deleteTalker = async (req, res) => {
 
 const searchTalker = async (req, res) => {
   try {
-    console.log('reqparams', req.query);
     const result = await talkerService.searchTalker(req.query);
       return res.status(200).json(result);
   } catch (error) {
