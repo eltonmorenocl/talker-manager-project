@@ -35,6 +35,8 @@
 
 * [Tecnologias](#-tecnologias)
 
+* [Documentação da API](#blue_book-documentação-da-api)
+
 * [Autor](#-autor)
 
 
@@ -103,12 +105,23 @@ As seguintes ferramentas foram usadas na construção do projeto:
 -   **[Javascript](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript)**
 -   **[EsLint](https://eslint.org/)**
 -   **[Nodemon](https://nodemon.io/)**
+-   **[Swagger](https://swagger.io/)**
 
 
 
 <br />
 <br />
 <br />
+
+## :blue_book: Documentação da API
+
+[**Link - Documentação da API**](http://localhost:3000/api-docs)
+
+![alt text](https://github.com/eltonmorenocl/talker-manager-project/blob/main/swagger-img.png)
+
+
+
+
 
 ## 👨‍💻 Autor
 
