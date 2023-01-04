@@ -1,0 +1,450 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Talker Manager Project",
+    "description": "API de um CRUD (Create, Read, Update e Delete) de palestrantes que utiliza o módulo FS do Node.js para ler e escrever em um arquivo JSON simulando um banco de dados.",
+    "contact": {
+      "name": "Elton Moreno",
+      "email": "eltonmorenocl@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://localhost:3000",
+      "description": "API server"
+    }
+  ],
+  "paths": {
+    "/talker": {  
+      "get": {
+        "summary": "endpoint GET /talker",
+        "description": "endpoint deve retornar um array com todas as pessoas palestrantes cadastradas. Devendo retornar o status 200",
+        "tags": ["Talker"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "name": "Henrique Albuquerque",
+                    "age": 62,
+                    "id": 1,
+                    "talk": {
+                      "watchedAt": "23/10/2020",
+                      "rate": 5
+                    }
+                  },
+                  {
+                    "name": "Heloísa Albuquerque",
+                    "age": 67,
+                    "id": 2,
+                    "talk": {
+                      "watchedAt": "23/10/2020",
+                      "rate": 5
+                    }
+                  },
+                  {
+                    "name": "Ricardo Xavier Filho",
+                    "age": 33,
+                    "id": 3,
+                    "talk": {
+                      "watchedAt": "23/10/2020",
+                      "rate": 5
+                    }
+                  },
+                  {
+                    "name": "Marcos Costa",
+                    "age": 24,
+                    "id": 4,
+                    "talk": {
+                      "watchedAt": "23/10/2020",
+                      "rate": 5
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "post":{
+        "summary": "endpoint POST /talker",
+        "description": "O endpoint deve ser capaz de adicionar uma nova pessoa palestrante ao seu arquivo",
+        "tags": ["Talker"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Talker"
+              },
+              "example": {
+                "name": "Danielle Santos",
+                "age": 56,
+                "talk": {
+                  "watchedAt": "22/10/2019",
+                  "rate": 5
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": {
+                  "name": "Danielle Santos",
+                  "age": 56,
+                  "talk": {
+                    "watchedAt": "22/10/2019",
+                    "rate": 5
+                  }    
+                }           
+              }
+            }
+          },
+          "400": {
+            "description": "Validação dos campos informados",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                  "description": "aso o campo não seja passado ou esteja vazio",
+                  "message": "O campo \"name\" é obrigatório"
+                },
+                {
+                  "description": "Caso o nome não tenha pelo menos 3 caracteres",
+                  "message": "O \"name\" deve ter pelo menos 3 caracteres"
+                },
+                {
+                  "description": "Caso o campo não seja passado ou esteja vazio",
+                  "message": "O campo \"age\" é obrigatório"
+                },
+                {
+                  "description": "Caso a pessoa palestrante não tenha pelo menos 18 anos",
+                  "message": "A pessoa palestrante deve ser maior de idade"
+                },
+                {
+                  "description": "Caso a data não respeito o formato dd/mm/aaaa",
+                  "message": "O campo \"watchedAt\" deve ter o formato \"dd/mm/aaaa\""
+                },
+                {
+                  "description": "Caso a nota não seja um inteiro de 1 à 5",
+                  "message": "O campo \"rate\" deve ser um inteiro de 1 à 5"
+                },
+                {
+                  "description": "Caso o campo não seja informado, esteja vazio ou então alguma de suas chaves não tenham sido informadas",
+                  "message": "O campo \"talk\" é obrigatório e \"watchedAt\" e \"rate\" não podem ser vazios"
+                }
+                ]
+              }
+            }
+          },
+          "401": {
+            "description": "Validação do Token",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "description": "Caso o token não seja encontrado",
+                    "message": "Token não encontrado"
+                  },
+                  {
+                    "description": "Caso o token seja inválido",
+                    "message": "Token inválido"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/talker/{id}": {
+      "get":{
+        "summary": "endpoint GET /talker/:id",
+        "description": "O endpoint deve retornar uma pessoa palestrante com base no id da rota. Devendo retornar o status 200 ao fazer uma requisição /talker/1",
+        "tags": ["Talker"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "name": "Henrique Albuquerque",
+                    "age": 62,
+                    "id": 1,
+                    "talk": {
+                      "watchedAt": "23/10/2020",
+                      "rate": 5
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Pessoa palestrante não encontrada"
+          }
+        }
+      },
+      "put":{
+        "summary": "endpoint PUT /talker/:id",
+        "description": "O endpoint deve ser capaz de editar uma pessoa palestrante com base no id da rota, sem alterar o id registrado",
+        "tags": ["Talker"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Talker"
+              },
+              "example": {
+                "name": "Danielle Santos",
+                "age": 56,
+                "talk": {
+                  "watchedAt": "22/10/2019",
+                  "rate": 5
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "name": "Danielle Santos",
+                    "age": 56,
+                    "id": 1,
+                    "talk": {
+                      "watchedAt": "22/10/2019",
+                      "rate": 4
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "Pessoa palestrante não encontrada"
+          }
+        }
+      },
+      "delete":{
+        "summary": "endpoint DELETE /talker/:id",
+        "description": "O endpoint deve deletar uma pessoa palestrante com base no id da rota",
+        "tags": ["Talker"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": [
+                  { }
+                ]
+              }
+            }
+          },
+          "401": {
+            "description": "Validação do Token",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "description": "Caso o token não seja encontrado",
+                    "message": "Token não encontrado"
+                  },
+                  {
+                    "description": "Caso o token seja inválido",
+                    "message": "Token inválido"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }   
+    },
+    "/talker/search": {
+      "get":{
+        "summary": "endpoint GET /talker/search?q=searchTerm",
+        "description": "O endpoint deve retornar um array de palestrantes que contenham em seu nome o termo pesquisado no queryParam da URL",
+        "tags": ["Talker"],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "q",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Talker"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Validação do Token",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "description": "Caso o token não seja encontrado",
+                    "message": "Token não encontrado"
+                  },
+                  {
+                    "description": "Caso o token seja inválido",
+                    "message": "Token inválido"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post":{
+        "summary": "endpoint POST /login",
+        "description": "O endpoint deve ser capaz de retornar um token aleatório de 16 caracteres que deverá ser utilizado nas demais requisições",
+        "tags": ["Login"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login",
+                "properties": {
+                  "email": { 
+                    "description": "Updated name of the pet",
+                    "type": "string"
+                  },
+                  "password": {
+                    "description": "Updated status of the pet",
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "email": "email@email.com",
+                "password": "123456"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": {
+                  "token": "823256d45f46d4ec"    
+                }           
+              }
+            }
+          },
+          "400": {
+            "description": "Caso o campo não seja passado ou esteja vazio retorne um código de status 400",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                  "description": "Caso o campo não seja passado ou esteja vazio",
+                  "message": "O campo \"email\" é obrigatório"
+                },
+                {
+                  "description": "Caso o email passado não seja um email válido",
+                  "message": "O \"email\" deve ter o formato \"email@email.com\""
+                },
+                {
+                  "description": "O campo password deverá ter pelo menos 6 caracteres",
+                  "message": "O campo \"password\" é obrigatório"
+                },
+                {
+                  "description": "Caso a senha não tenha pelo menos 6 caracteres",
+                  "message": "O \"password\" deve ter pelo menos 6 caracteres"
+                }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+"components": {
+  "schemas": {
+    "Talker": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "age": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "talk": {
+          "watchedAt": {
+            "type": "number"
+          },
+          "rate": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "Login": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "required": true
+        },
+        "password": {
+          "type": "number",
+          "required": true
+        }
+      }
+    }
+  }
+}
+}
